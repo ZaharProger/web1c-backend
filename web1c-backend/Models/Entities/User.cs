@@ -1,4 +1,6 @@
-﻿namespace web1c_backend.Models.Entities
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+namespace web1c_backend.Models.Entities
 {
     public class User
     {
