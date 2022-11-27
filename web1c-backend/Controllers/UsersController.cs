@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using web1c_backend.Models;
 using web1c_backend.Models.Entities;
+using web1c_backend.Models.Http.Responses;
+using web1c_backend.Models.Http.Params;
 
 namespace web1c_backend.Controllers
 {
@@ -18,59 +20,73 @@ namespace web1c_backend.Controllers
 
         public UsersController(Web1cDBContext context)
         {
-            _context = context;
+            this._context = context;
         }
 
-        // GET: api/Users
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<En_user>>> GetUsers()
+        public async Task<JsonResult> GetUsersHandler([FromQuery] GetParams getUsersParams)
         {
-            return await _context.Users.ToListAsync();
+            var response = new DataResponse<En_user>()
+            {
+                Result = false,
+                Message = ":(",
+                Data = Array.Empty<En_user>()
+            };
+
+            if (getUsersParams.Type == 0)
+            {
+                response = await GetUserByLogin(getUsersParams.Key);
+            }
+            else if (getUsersParams.Type == 1)
+            {
+                response = await GetUserById(long.Parse(getUsersParams.Key));
+            }
+
+            return new JsonResult(response);
         }
 
-        // GET: api/Users/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<En_user>> GetUser(long id)
+        private async Task<DataResponse<En_user>> GetUserByLogin(string userLogin)
         {
-            var user = await _context.Users.FindAsync(id);
+            En_user[]? foundData = Array.Empty<En_user>();
 
-            if (user == null)
+            foundData = await _context.Users
+                .Where(user => user.En_user_login.Equals(userLogin))
+                .Select(foundUser => new En_user()
+                {
+                    En_user_id = foundUser.En_user_id,
+                    En_user_login = foundUser.En_user_login,
+                    En_user_password = foundUser.En_user_password
+                })
+                .ToArrayAsync();
+
+            return new DataResponse<En_user>()
             {
-                return NotFound();
-            }
-
-            return user;
+                Result = foundData.Length != 0,
+                Message = "",
+                Data = foundData
+            };
         }
-
-        // PUT: api/Users/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutUser(long id, [FromBody]En_user user)
+        
+        private async Task<DataResponse<En_user>> GetUserById(long id)
         {
-            if (id != user.En_user_id)
-            {
-                return BadRequest();
-            }
+            En_user[]? foundData = Array.Empty<En_user>();
 
-            _context.Entry(user).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!UserExists(id))
+            foundData = await _context.Users
+                .Where(user => user.En_user_id.Equals(id))
+                .Select(foundUser => new En_user()
                 {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+                    En_user_id = foundUser.En_user_id,
+                    En_user_login = foundUser.En_user_login,
+                    En_user_password = foundUser.En_user_password
+                })
+                .ToArrayAsync();
 
-            return NoContent();
+            return new DataResponse<En_user>()
+            {
+                Result = foundData.Length != 0,
+                Message = "",
+                Data = foundData
+            };
         }
 
         // POST: api/Users
