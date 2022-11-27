@@ -5,10 +5,13 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Cryptography;
 using web1c_backend.Models;
 using web1c_backend.Models.Entities;
 using web1c_backend.Models.Http.Responses;
 using web1c_backend.Models.Http.Params;
+using static System.Collections.Specialized.BitVector32;
+using System.Text;
 
 namespace web1c_backend.Controllers
 {
@@ -23,6 +26,8 @@ namespace web1c_backend.Controllers
             this._context = context;
         }
 
+        //0 - by login
+        //1- by id
         [HttpGet]
         public async Task<JsonResult> GetUsersHandler([FromQuery] GetParams getUsersParams)
         {
@@ -89,16 +94,75 @@ namespace web1c_backend.Controllers
             };
         }
 
-        // POST: api/Users
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        // POST: /Users
         [HttpPost]
-        public async Task<ActionResult<En_user>> PostUser(En_user user)
+        public async Task<IActionResult> AuthHandler([FromForm] AuthParams authParams)
         {
-            _context.Users.Add(user);
-            await _context.SaveChangesAsync();
+            var passwordEncryptor = SHA256.Create();
 
-            return CreatedAtAction("GetUser", new { id = user.En_user_id }, user);
+            /*
+            if(authParams.RequestType == 0)
+            {
+                var response = await AuthorizeUser(authParams, passwordEncryptor);
+            }
+            */
+
+            var response = await AuthorizeUser(authParams, passwordEncryptor);
+
+            return new JsonResult(response);
         }
+
+        private async Task<BaseResponse> AuthorizeUser(AuthParams authParams, SHA256? passwordEncryptor)
+        {
+            var foundUser = await _context.Users
+                .Where(user => user.En_user_login.Equals(authParams.Login))
+                .ToArrayAsync();
+
+            var passwordByteArray = Encoding.UTF8.GetBytes(authParams.Password);
+            var hashedPassword = passwordEncryptor.ComputeHash(passwordByteArray);
+
+            var messageForClient = "Wrong Password";
+            var incorrectFieldType = "login";
+            var sessionId = -1L;
+
+            if (foundUser.Length != 0)
+            {
+                if (foundUser[0].En_user_password.SequenceEqual(hashedPassword))
+                {
+                    messageForClient = "auth success";
+                    sessionId = (long)DateTime.Now.Subtract(new DateTime(1970, 1, 1)).TotalSeconds;
+
+                    await _context.Sessions.AddAsync(new En_session()
+                    {
+                        En_session_id = sessionId,
+                        En_user_id = foundUser[0].En_user_id
+                    });
+                    await _context.SaveChangesAsync();
+
+                    HttpContext.Response.Cookies.Append("session_id", sessionId.ToString(), new CookieOptions()
+                    {
+                        Path = "/",
+                        Secure = true,
+                        HttpOnly = true,
+                        SameSite = SameSiteMode.Strict,
+                        Expires = DateTimeOffset.Now.AddDays(7)
+                    });
+                }
+                else
+                {
+                    messageForClient = "Wrong Password";
+                    incorrectFieldType = "login";
+                }
+            }
+
+            return new BaseResponse()
+            {
+                Result = messageForClient == "auth success",
+                Message = messageForClient
+            };
+        }
+
+
 
         // DELETE: api/Users/5
         [HttpDelete("{id}")]
