@@ -23,14 +23,14 @@ namespace web1c_backend.Controllers
 
         // GET: api/Users
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<User>>> GetUsers()
+        public async Task<ActionResult<IEnumerable<En_user>>> GetUsers()
         {
             return await _context.Users.ToListAsync();
         }
 
         // GET: api/Users/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<User>> GetUser(long id)
+        public async Task<ActionResult<En_user>> GetUser(long id)
         {
             var user = await _context.Users.FindAsync(id);
 
@@ -45,7 +45,7 @@ namespace web1c_backend.Controllers
         // PUT: api/Users/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutUser(long id, User user)
+        public async Task<IActionResult> PutUser(long id, [FromBody]En_user user)
         {
             if (id != user.En_user_id)
             {
@@ -76,7 +76,7 @@ namespace web1c_backend.Controllers
         // POST: api/Users
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<User>> PostUser(User user)
+        public async Task<ActionResult<En_user>> PostUser(En_user user)
         {
             _context.Users.Add(user);
             await _context.SaveChangesAsync();

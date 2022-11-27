@@ -23,14 +23,14 @@ namespace web1c_backend.Controllers
 
         // GET: api/Sessions
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Session>>> GetSessions()
+        public async Task<ActionResult<IEnumerable<En_session>>> GetSessions()
         {
             return await _context.Sessions.ToListAsync();
         }
 
         // GET: api/Sessions/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Session>> GetSession(long id)
+        public async Task<ActionResult<En_session>> GetSession(long id)
         {
             var session = await _context.Sessions.FindAsync(id);
 
@@ -45,7 +45,7 @@ namespace web1c_backend.Controllers
         // PUT: api/Sessions/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutSession(long id, Session session)
+        public async Task<IActionResult> PutSession(long id, En_session session)
         {
             if (id != session.En_session_id)
             {
@@ -76,7 +76,7 @@ namespace web1c_backend.Controllers
         // POST: api/Sessions
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Session>> PostSession(Session session)
+        public async Task<ActionResult<En_session>> PostSession(En_session session)
         {
             _context.Sessions.Add(session);
             await _context.SaveChangesAsync();
