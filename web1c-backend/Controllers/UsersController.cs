@@ -39,11 +39,11 @@ namespace web1c_backend.Controllers
                 Data = Array.Empty<En_user>()
             };
 
-            if (getUsersParams.Type == AUTH_TYPE)
+            if (getUsersParams.Type == ConstValues.AUTH_TYPE)
             {
                 response = await GetUserByLogin(getUsersParams.Key);
             }
-            else if (getUsersParams.Type == REG_TYPE)
+            else if (getUsersParams.Type == ConstValues.REG_TYPE)
             {
                 response = await GetUserById(long.Parse(getUsersParams.Key));
             }
@@ -136,7 +136,7 @@ namespace web1c_backend.Controllers
             return new BaseResponse()
             {
                 Result = !isUserExist,
-                Message = !isUserExist ? "Вы успешно зарегистрировались!" : "Пользователь с введеным логином уже существует!"
+                Message = !isUserExist ? ConstValues.REG_SUCCESS : ConstValues.REG_FAILED
             };
         }
 
@@ -149,15 +149,15 @@ namespace web1c_backend.Controllers
             var passwordByteArray = Encoding.UTF8.GetBytes(authParams.Password);
             var hashedPassword = passwordEncryptor.ComputeHash(passwordByteArray);
 
-            var messageForClient = "Wrong Password";
-            var incorrectFieldType = "login";
+            var messageForClient = ConstValues.AUTH_W_PASS;
+            var incorrectFieldType = ConstValues.L_FIELD_TYPE;
             var sessionId = -1L;
 
             if (foundUser.Length != 0)
             {
                 if (foundUser[0].En_user_password.SequenceEqual(hashedPassword))
                 {
-                    messageForClient = "auth success";
+                    messageForClient = ConstValues.AUTH_SUCCESS;
                     sessionId = (long)DateTime.Now.Subtract(new DateTime(1970, 1, 1)).TotalSeconds;
 
                     await _context.Sessions.AddAsync(new En_session()
@@ -167,7 +167,7 @@ namespace web1c_backend.Controllers
                     });
                     await _context.SaveChangesAsync();
 
-                    HttpContext.Response.Cookies.Append("session_id", sessionId.ToString(), new CookieOptions()
+                    HttpContext.Response.Cookies.Append(ConstValues.SESSION_ID, sessionId.ToString(), new CookieOptions()
                     {
                         Path = "/",
                         Secure = true,
@@ -178,14 +178,14 @@ namespace web1c_backend.Controllers
                 }
                 else
                 {
-                    messageForClient = "Wrong Password";
-                    incorrectFieldType = "login";
+                    messageForClient = ConstValues.AUTH_W_PASS;
+                    incorrectFieldType = ConstValues.L_FIELD_TYPE;
                 }
             }
 
             return new BaseResponse()
             {
-                Result = messageForClient == "auth success",
+                Result = messageForClient == ConstValues.AUTH_SUCCESS,
                 Message = messageForClient
             };
         }
@@ -197,7 +197,7 @@ namespace web1c_backend.Controllers
         public async Task<JsonResult> Delete()
         {
             En_session? sessionToRemove = null;
-            var sessionId = CheckSession("session_id");
+            var sessionId = CheckSession(ConstValues.SESSION_ID);
             try
             {
                 sessionToRemove = await _context.Sessions
@@ -208,7 +208,7 @@ namespace web1c_backend.Controllers
 
             if (sessionToRemove != null)
             {
-                HttpContext.Response.Cookies.Delete("session_id");
+                HttpContext.Response.Cookies.Delete(ConstValues.SESSION_ID);
 
                 _context.Sessions.Remove(sessionToRemove);
                 await _context.SaveChangesAsync();
@@ -217,7 +217,7 @@ namespace web1c_backend.Controllers
             return new JsonResult(new BaseResponse()
             {
                 Result = sessionToRemove != null,
-                Message = sessionToRemove != null ? "Session was delete" : "Session not found"
+                Message = sessionToRemove != null ? ConstValues.SESSION_REMOVED : ConstValues.SESSION_NOT_FOUND
             });
         }
 
