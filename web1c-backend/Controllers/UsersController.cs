@@ -95,6 +95,8 @@ namespace web1c_backend.Controllers
         }
 
         // POST: /Users
+        //0 - autorize
+        //1 - registration
         [HttpPost]
         public async Task<IActionResult> AuthHandler([FromForm] AuthParams authParams)
         {
@@ -105,7 +107,6 @@ namespace web1c_backend.Controllers
             {
                 response = await AuthorizeUser(authParams, passwordEncryptor);
             }
-            //else if (authParams.RequestType == 1)
             else
             {
                 response = await RegisterUser(authParams, passwordEncryptor);
