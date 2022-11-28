@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography;
 using web1c_backend.Models;
+using web1c_backend.Constants;
+using web1c_backend.Constants.ConstValues;
 using web1c_backend.Models.Entities;
 using web1c_backend.Models.Http.Responses;
 using web1c_backend.Models.Http.Params;
@@ -38,11 +40,11 @@ namespace web1c_backend.Controllers
                 Data = Array.Empty<En_user>()
             };
 
-            if (getUsersParams.Type == 0)
+            if (getUsersParams.Type == AUTH_TYPE)
             {
                 response = await GetUserByLogin(getUsersParams.Key);
             }
-            else if (getUsersParams.Type == 1)
+            else if (getUsersParams.Type == REG_TYPE)
             {
                 response = await GetUserById(long.Parse(getUsersParams.Key));
             }
