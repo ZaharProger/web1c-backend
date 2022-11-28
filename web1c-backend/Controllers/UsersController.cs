@@ -99,17 +99,44 @@ namespace web1c_backend.Controllers
         public async Task<IActionResult> AuthHandler([FromForm] AuthParams authParams)
         {
             var passwordEncryptor = SHA256.Create();
+            BaseResponse response;
 
-            /*
-            if(authParams.RequestType == 0)
+            if (authParams.RequestType == 0)
             {
-                var response = await AuthorizeUser(authParams, passwordEncryptor);
+                response = await AuthorizeUser(authParams, passwordEncryptor);
             }
-            */
-
-            var response = await AuthorizeUser(authParams, passwordEncryptor);
+            //else if (authParams.RequestType == 1)
+            else
+            {
+                response = await RegisterUser(authParams, passwordEncryptor);
+            }
 
             return new JsonResult(response);
+        }
+
+        private async Task<BaseResponse> RegisterUser(AuthParams authParams, SHA256? passwordEncryptor)
+        {
+            var isUserExist = await _context.Users
+                .AnyAsync(user => user.En_user_login.Equals(authParams.Login));
+
+            if (!isUserExist)
+            {
+                var passwordByteArray = Encoding.UTF8.GetBytes(authParams.Password);
+                var hashedPassword = passwordEncryptor.ComputeHash(passwordByteArray);
+
+                await _context.Users.AddAsync(new En_user()
+                {
+                    En_user_login = authParams.Login,
+                    En_user_password = hashedPassword
+                });
+                await _context.SaveChangesAsync();
+            }
+
+            return new BaseResponse()
+            {
+                Result = !isUserExist,
+                Message = !isUserExist ? "Вы успешно зарегистрировались!" : "Пользователь с введеным логином уже существует!"
+            };
         }
 
         private async Task<BaseResponse> AuthorizeUser(AuthParams authParams, SHA256? passwordEncryptor)
@@ -165,24 +192,53 @@ namespace web1c_backend.Controllers
 
 
         // DELETE: api/Users/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteUser(long id)
+        [HttpDelete]
+        public async Task<JsonResult> Delete()
         {
-            var user = await _context.Users.FindAsync(id);
-            if (user == null)
+            En_session? sessionToRemove = null;
+            var sessionId = CheckSession("session_id");
+            try
             {
-                return NotFound();
+                sessionToRemove = await _context.Sessions
+                    .FirstAsync(session => session.En_session_id == sessionId);
+            }
+            catch (Exception)
+            { }
+
+            if (sessionToRemove != null)
+            {
+                HttpContext.Response.Cookies.Delete("session_id");
+
+                _context.Sessions.Remove(sessionToRemove);
+                await _context.SaveChangesAsync();
             }
 
-            _context.Users.Remove(user);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            return new JsonResult(new BaseResponse()
+            {
+                Result = sessionToRemove != null,
+                Message = sessionToRemove != null ? "Session was delete" : "Session not found"
+            });
         }
 
         private bool UserExists(long id)
         {
             return _context.Users.Any(e => e.En_user_id == id);
+        }
+
+        private long? CheckSession(string cookieKey)
+        {
+            long? sessionId = null;
+            if (HttpContext.Request.Cookies[cookieKey] != null)
+            {
+                try
+                {
+                    sessionId = long.Parse(HttpContext.Request.Cookies[cookieKey]);
+                }
+                catch (FormatException)
+                { }
+            }
+
+            return sessionId;
         }
     }
 }
