@@ -183,11 +183,7 @@ namespace web1c_backend.Controllers
                     incorrectFieldType = ConstValues.P_FIELD_TYPE;
                 }
             }
-            else
-            {
-                messageForClient = ConstValues.AUTH_W_LOGIN;
-                incorrectFieldType = ConstValues.L_FIELD_TYPE;
-            }
+    
 
             return new BaseResponse()
             {
