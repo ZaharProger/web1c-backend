@@ -104,7 +104,7 @@ namespace web1c_backend.Controllers
             var passwordEncryptor = SHA256.Create();
             BaseResponse response;
 
-            if (authParams.RequestType == 0)
+            if (authParams.RequestType == ConstValues.AUTH_TYPE)
             {
                 response = await AuthorizeUser(authParams, passwordEncryptor);
             }
@@ -180,8 +180,13 @@ namespace web1c_backend.Controllers
                 else
                 {
                     messageForClient = ConstValues.AUTH_W_PASS;
-                    incorrectFieldType = ConstValues.L_FIELD_TYPE;
+                    incorrectFieldType = ConstValues.P_FIELD_TYPE;
                 }
+            }
+            else
+            {
+                messageForClient = ConstValues.AUTH_W_LOGIN;
+                incorrectFieldType = ConstValues.L_FIELD_TYPE;
             }
 
             return new BaseResponse()
