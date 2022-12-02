@@ -116,13 +116,15 @@ namespace web1c_backend.Controllers
             return new JsonResult(response);
         }
 
-        private async Task<BaseResponse> RegisterUser(AuthParams authParams, SHA256? passwordEncryptor)
+        private async Task<PostResponse> RegisterUser(AuthParams authParams, SHA256? passwordEncryptor)
         {
             var isUserExist = await _context.Users
                 .AnyAsync(user => user.En_user_login.Equals(authParams.Login));
+            var incorrectFieldType = ConstValues.L_FIELD_TYPE;
 
             if (!isUserExist)
             {
+                incorrectFieldType = ConstValues.EMPTY_STRING;
                 var passwordByteArray = Encoding.UTF8.GetBytes(authParams.Password);
                 var hashedPassword = passwordEncryptor.ComputeHash(passwordByteArray);
 
@@ -134,14 +136,15 @@ namespace web1c_backend.Controllers
                 await _context.SaveChangesAsync();
             }
 
-            return new BaseResponse()
+            return new PostResponse()
             {
                 Result = !isUserExist,
-                Message = !isUserExist ? ConstValues.REG_SUCCESS : ConstValues.REG_FAILED
+                Message = !isUserExist ? ConstValues.REG_SUCCESS : ConstValues.REG_FAILED,
+                IncorrectFieldType = incorrectFieldType,
             };
         }
 
-        private async Task<BaseResponse> AuthorizeUser(AuthParams authParams, SHA256? passwordEncryptor)
+        private async Task<PostResponse> AuthorizeUser(AuthParams authParams, SHA256? passwordEncryptor)
         {
             var foundUser = await _context.Users
                 .Where(user => user.En_user_login.Equals(authParams.Login))
@@ -158,6 +161,7 @@ namespace web1c_backend.Controllers
             {
                 if (foundUser[0].En_user_password.SequenceEqual(hashedPassword))
                 {
+                    incorrectFieldType = ConstValues.EMPTY_STRING;
                     messageForClient = ConstValues.AUTH_SUCCESS;
                     sessionId = (long)DateTime.Now.Subtract(new DateTime(1970, 1, 1)).TotalSeconds;
 
@@ -183,12 +187,13 @@ namespace web1c_backend.Controllers
                     incorrectFieldType = ConstValues.P_FIELD_TYPE;
                 }
             }
-    
 
-            return new BaseResponse()
+
+            return new PostResponse()
             {
                 Result = messageForClient == ConstValues.AUTH_SUCCESS,
-                Message = messageForClient
+                Message = messageForClient,
+                IncorrectFieldType = incorrectFieldType,
             };
         }
 

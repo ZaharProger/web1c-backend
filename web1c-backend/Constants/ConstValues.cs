@@ -19,6 +19,7 @@ namespace web1c_backend.Constants
         public static readonly string P_FIELD_TYPE = "password";
         public static readonly string SESSION_REMOVED = "Сессия окончена";
         public static readonly string SESSION_NOT_FOUND = "Сессия не найдена";
+        public static readonly string EMPTY_STRING = "";
         public static readonly DateTime UNIX_START_DATE = new DateTime(1970, 1, 1);
     }
 }
