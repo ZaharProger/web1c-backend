@@ -150,7 +150,7 @@ namespace web1c_backend.Controllers
             var passwordByteArray = Encoding.UTF8.GetBytes(authParams.Password);
             var hashedPassword = passwordEncryptor.ComputeHash(passwordByteArray);
 
-            var messageForClient = ConstValues.AUTH_W_PASS;
+            var messageForClient = ConstValues.AUTH_W_LOGIN;
             var incorrectFieldType = ConstValues.L_FIELD_TYPE;
             var sessionId = -1L;
 
