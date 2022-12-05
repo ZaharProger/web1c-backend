@@ -2,7 +2,7 @@
 {
     public class GetParams
     {
-        public string Key { get; set; }
+        public string Key { get; set; } = "";
         public int Type { get; set; }
     }
 }
