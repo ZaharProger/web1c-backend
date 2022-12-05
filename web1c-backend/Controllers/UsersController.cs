@@ -29,23 +29,30 @@ namespace web1c_backend.Controllers
 
         //0 - by login
         //1- by id
+        //2- by SessionId
         [HttpGet]
         public async Task<JsonResult> GetUsersHandler([FromQuery] GetParams getUsersParams)
         {
+            var sessionId = CheckSession(ConstValues.SESSION_ID);
+
             var response = new DataResponse<En_user>()
             {
                 Result = false,
-                Message = ":(",
+                Message = ConstValues.TYPE_FAILURE,
                 Data = Array.Empty<En_user>()
             };
 
-            if (getUsersParams.Type == ConstValues.AUTH_TYPE)
+            if (getUsersParams.Type == ConstValues.LOGIN_TYPE)
             {
                 response = await GetUserByLogin(getUsersParams.Key);
             }
-            else if (getUsersParams.Type == ConstValues.REG_TYPE)
+            else if (getUsersParams.Type == ConstValues.ID_TYPE)
             {
                 response = await GetUserById(long.Parse(getUsersParams.Key));
+            }
+            else if (getUsersParams.Type == ConstValues.SESSION_TYPE)
+            {
+                response = await GetUserBySessionId(sessionId);
             }
 
             return new JsonResult(response);
@@ -61,7 +68,6 @@ namespace web1c_backend.Controllers
                 {
                     En_user_id = foundUser.En_user_id,
                     En_user_login = foundUser.En_user_login,
-                    En_user_password = foundUser.En_user_password
                 })
                 .ToArrayAsync();
 
@@ -83,10 +89,38 @@ namespace web1c_backend.Controllers
                 {
                     En_user_id = foundUser.En_user_id,
                     En_user_login = foundUser.En_user_login,
-                    En_user_password = foundUser.En_user_password
                 })
                 .ToArrayAsync();
 
+            return new DataResponse<En_user>()
+            {
+                Result = foundData.Length != 0,
+                Message = "",
+                Data = foundData
+            };
+        }
+
+        private async Task<DataResponse<En_user>> GetUserBySessionId(long? sessionId)
+        {
+            En_user[]? foundData = Array.Empty<En_user>();
+
+            if(sessionId != null)
+            {
+                foundData = await _context.Sessions
+                .Where(session => session.En_session_id == sessionId)
+                .Join(_context.Users, session => session.En_user_id, user => user.En_user_id, (session, user) => new
+                {
+                    sessionId = session.En_session_id,
+                    userData = new En_user()
+                    {
+                        En_user_id = user.En_user_id,
+                        En_user_login = user.En_user_login,
+                    }
+                })
+                .Select(foundItem => foundItem.userData)
+                .ToArrayAsync();
+            }
+            
             return new DataResponse<En_user>()
             {
                 Result = foundData.Length != 0,
@@ -102,13 +136,18 @@ namespace web1c_backend.Controllers
         public async Task<IActionResult> AuthHandler([FromForm] AuthParams authParams)
         {
             var passwordEncryptor = SHA256.Create();
-            BaseResponse response;
+            var response = new PostResponse()
+            {
+                Result = false,
+                Message = ConstValues.TYPE_FAILURE,
+                IncorrectFieldType = ConstValues.EMPTY_STRING,
+            };
 
             if (authParams.RequestType == ConstValues.AUTH_TYPE)
             {
                 response = await AuthorizeUser(authParams, passwordEncryptor);
             }
-            else
+            else if (authParams.RequestType == ConstValues.REG_TYPE)
             {
                 response = await RegisterUser(authParams, passwordEncryptor);
             }

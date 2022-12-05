@@ -13,6 +13,9 @@ namespace web1c_backend.Constants
         public static readonly string AUTH_W_PASS = "Неправильный пароль, попытайтесь еще!";
         public static readonly int AUTH_TYPE = 0;
         public static readonly int REG_TYPE = 1;
+        public static readonly int LOGIN_TYPE = 0;
+        public static readonly int ID_TYPE = 1;
+        public static readonly int SESSION_TYPE = 2;
         public static readonly string L_FIELD_TYPE = "login";
         public static readonly string SESSION_ID = "session_id";
         public static readonly string COOKIE_PATH = "/";
@@ -20,6 +23,7 @@ namespace web1c_backend.Constants
         public static readonly string SESSION_REMOVED = "Сессия окончена";
         public static readonly string SESSION_NOT_FOUND = "Сессия не найдена";
         public static readonly string EMPTY_STRING = "";
+        public static readonly string TYPE_FAILURE = "Некорректный тип запроса";
         public static readonly DateTime UNIX_START_DATE = new DateTime(1970, 1, 1);
     }
 }
