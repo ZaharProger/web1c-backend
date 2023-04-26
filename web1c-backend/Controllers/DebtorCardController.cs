@@ -16,7 +16,7 @@ using System.Text;
 
 namespace web1c_backend.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/classes/debtors")]
     [ApiController]
     public class DebtorCardController : ControllerBase
     {
@@ -28,26 +28,27 @@ namespace web1c_backend.Controllers
         }
 
         [HttpGet]
-        public async Task<JsonResult> GetDebtorCard([FromQuery] GetParams getCardParams)
+        public async Task<JsonResult> GetDebtorCards([FromQuery] GetParams getDebtorCardParams)
         {
             En_debtor_card[]? foundData = Array.Empty<En_debtor_card>();
-            foundData = await _context.Debtor_Cards
-                .Where(cardRec => cardRec.debtor_card_id.ToString().Equals(getCardParams.Key))
-                .Select(foundCard => new En_debtor_card()
-                {
-                    debtor_card_id = foundCard.debtor_card_id,
-                    debtor_card_name = foundCard.debtor_card_name,
-                    creation_date= foundCard.creation_date,
-                    debtor_id = foundCard.debtor_id,
-                    inn= foundCard.inn,
-                    kpp= foundCard.kpp,
-                    is_smp= foundCard.is_smp,
-                    sanctions= foundCard.sanctions,
-                    is_bankrupt= foundCard.is_bankrupt,
-                    is_in_creditors_list = foundCard.is_in_creditors_list,
-                    emergency_message_id= foundCard.emergency_message_id,
-                })
-                .ToArrayAsync();
+            if (getDebtorCardParams.Type == -1)
+            {
+                foundData = await _context.Debtor_Cards
+                    .Select(debtorCard=> new En_debtor_card()
+                    {
+                        creation_date = debtorCard.creation_date,
+                        debtor_card_id = debtorCard.debtor_card_id,                      
+                        debtor_card_name = debtorCard.debtor_card_name,
+                        debtor_id = debtorCard.debtor_id
+                    })
+                    .ToArrayAsync();
+            }
+            else
+            {
+                foundData = await _context.Debtor_Cards
+                    .Where(debtorCard => debtorCard.debtor_card_id.ToString().Equals(getDebtorCardParams.Key))
+                    .ToArrayAsync();
+            }
 
             var response = new DataResponse<En_debtor_card>()
             {

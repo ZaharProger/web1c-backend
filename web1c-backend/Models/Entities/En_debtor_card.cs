@@ -7,14 +7,14 @@ namespace web1c_backend.Models.Entities
     public class En_debtor_card
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity), Key, Column("debtor_card_id")]
-        public int debtor_card_id { get; set; }
+        public long debtor_card_id { get; set; }
 
         [Column("debtor_card_name", TypeName = "VARCHAR(100)")]
         public string debtor_card_name { get; set; }
-        [Column("creation_date", TypeName = "DATETIME")]
-        public DateTime creation_date { get; set; }
-        [Column("debtor_id", TypeName = "INT")]
-        public int debtor_id { get; set; }
+        [Column("creation_date", TypeName = "BIGINT")]
+        public long creation_date { get; set; }
+        [Column("debtor_id", TypeName = "BIGINT")]
+        public long debtor_id { get; set; }
         [Column("inn", TypeName = "VARCHAR(10)")]
         public string inn { get; set; }
         [Column("kpp", TypeName = "VARCHAR(9)")]
@@ -27,8 +27,6 @@ namespace web1c_backend.Models.Entities
         public bool is_bankrupt { get; set; }
         [Column("is_in_creditors_list", TypeName = "BIT")]
         public bool is_in_creditors_list { get; set; }
-        [Column("emergency_message_id", TypeName = "INT")]
-        public int emergency_message_id { get; set; }
     }
 }
 
@@ -42,6 +40,5 @@ namespace web1c_backend.Models.Entities
     is_smp BIT,
     sanctions VARCHAR,
     is_bankrupt BIT,
-    is_in_creditors_list BIT,
-    emergency_message_id INT,
+    is_in_creditors_list BIT
  */

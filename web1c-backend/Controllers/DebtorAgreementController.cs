@@ -16,7 +16,7 @@ using System.Text;
 
 namespace web1c_backend.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/docs/debtor-contracts")]
     [ApiController]
     public class DebtorAgreementController : ControllerBase
     {
@@ -28,35 +28,28 @@ namespace web1c_backend.Controllers
         }
 
         [HttpGet]
-        public async Task<JsonResult> GetDebtorAgreement([FromQuery] GetParams getDebtorParams)
+        public async Task<JsonResult> GetDebtorAgreements([FromQuery] GetParams getDebtorAgreementParams)
         {
             En_debtor_agreement[]? foundData = Array.Empty<En_debtor_agreement>();
-            foundData = await _context.Debtor_Agreement
-            .Where(debtor => debtor.debtor_id.ToString().Equals(getDebtorParams.Key))
-            .Select(foundDebtor => new En_debtor_agreement()
+            if (getDebtorAgreementParams.Type == -1)
             {
-                debtor_id = foundDebtor.debtor_id,
-                debtor_name = foundDebtor.debtor_name,
-                base_id = foundDebtor.base_id,
-                status_agreement = foundDebtor.status_agreement,
-                date_agreement = foundDebtor.date_agreement,
-                number_agreement = foundDebtor.number_agreement,
-                currency_id = foundDebtor.currency_id,
-                budget_id = foundDebtor.budget_id,
-                turnover_id = foundDebtor.turnover_id,
-                payment_id = foundDebtor.payment_id,
-                comment = foundDebtor.comment,
-                society_id = foundDebtor.society_id,
-                business_id = foundDebtor.business_id,
-                Market_view = foundDebtor.Market_view,
-                counter_id = foundDebtor.counter_id,
-                public_status = foundDebtor.public_status,
-                typical_status = foundDebtor.typical_status,
-                disabled_status = foundDebtor.disabled_status,
-                responsible = foundDebtor.responsible,
-            })
-            .ToArrayAsync();
-
+                foundData = await _context.Debtor_Agreement
+                    .Select(debtorAgreement => new En_debtor_agreement()
+                    {
+                        date_agreement = debtorAgreement.date_agreement,
+                        debtor_id = debtorAgreement.debtor_id,                     
+                        debtor_name = debtorAgreement.debtor_name,
+                        base_id = debtorAgreement.base_id,
+                        responsible = debtorAgreement.responsible
+                    })
+                    .ToArrayAsync();
+            }
+            else
+            {
+                foundData = await _context.Debtor_Agreement
+                    .Where(debtorAgreement => debtorAgreement.debtor_id.ToString().Equals(getDebtorAgreementParams.Key))
+                    .ToArrayAsync();
+            }
 
             var response = new DataResponse<En_debtor_agreement>()
             {
@@ -64,6 +57,7 @@ namespace web1c_backend.Controllers
                 Message = "",
                 Data = foundData
             };
+
             return new JsonResult(response);
         }
 

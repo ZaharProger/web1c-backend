@@ -7,27 +7,27 @@ namespace web1c_backend.Models.Entities
     public class En_event_record
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity), Key, Column("event_record_id")]
-        public int event_record_id { get; set; }
+        public long event_record_id { get; set; }
 
-        [Column("creation_date", TypeName = "DATETIME")]
-        public DateTime creation_date { get; set; }
-        [Column("send_date", TypeName = "DATETIME")]
-        public DateTime send_date { get; set; }
-        [Column("exp_execution_date", TypeName = "DATETIME")]
-        public DateTime exp_execution_date { get; set; }
-        [Column("execution_date", TypeName = "DATETIME")]
-        public DateTime executon_date { get; set; }
+        [Column("creation_date", TypeName = "BIGINT")]
+        public long creation_date { get; set; }
+        [Column("send_date", TypeName = "BIGINT")]
+        public long send_date { get; set; }
+        [Column("exp_execution_date", TypeName = "BIGINT")]
+        public long exp_execution_date { get; set; }
+        [Column("execution_date", TypeName = "BIGINT")]
+        public long executon_date { get; set; }
 
-        [Column("base_document_id", TypeName = "INT")]
-        public int base_document_id { get; set; }
-        [Column("work_type_id", TypeName = "INT")]
-        public int work_type_id { get; set; }
-        [Column("debtor_card_id", TypeName = "INT")]
-        public int debtor_card_id { get; set; }
-        [Column("company_id", TypeName = "INT")]
-        public int company_id { get; set; }
-        [Column("business_id", TypeName = "INT")]
-        public int business_id { get; set; }
+        [Column("base_document_id", TypeName = "BIGINT")]
+        public long base_document_id { get; set; }
+        [Column("work_type_id", TypeName = "BIGINT")]
+        public long work_type_id { get; set; }
+        [Column("debtor_card_id", TypeName = "BIGINT")]
+        public long debtor_card_id { get; set; }
+        [Column("company_id", TypeName = "BIGINT")]
+        public long company_id { get; set; }
+        [Column("business_id", TypeName = "BIGINT")]
+        public long business_id { get; set; }
         [Column("event_description", TypeName = "VARCHAR(1000)")]
         public string event_description { get; set; }
         [Column("event_comment", TypeName = "VARCHAR(1000)")]

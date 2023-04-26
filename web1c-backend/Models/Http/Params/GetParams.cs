@@ -3,6 +3,6 @@
     public class GetParams
     {
         public string Key { get; set; } = "";
-        public int Type { get; set; }
+        public int Type { get; set; } = -1;
     }
 }

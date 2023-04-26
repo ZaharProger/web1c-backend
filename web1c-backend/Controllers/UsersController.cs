@@ -242,7 +242,7 @@ namespace web1c_backend.Controllers
         [HttpDelete]
         public async Task<JsonResult> Delete()
         {
-            En_session? sessionToRemove = null;
+            En_session? sessionToRemove;
             var sessionId = CheckSession(ConstValues.SESSION_ID);
             try
             {
@@ -250,7 +250,9 @@ namespace web1c_backend.Controllers
                     .FirstAsync(session => session.En_session_id == sessionId);
             }
             catch (Exception)
-            { }
+            {
+                sessionToRemove = null;
+            }
 
             if (sessionToRemove != null)
             {
@@ -267,14 +269,9 @@ namespace web1c_backend.Controllers
             });
         }
 
-        private bool UserExists(long id)
-        {
-            return _context.Users.Any(e => e.En_user_id == id);
-        }
-
         private long? CheckSession(string cookieKey)
         {
-            long? sessionId = null;
+            long? sessionId;
             if (HttpContext.Request.Cookies[cookieKey] != null)
             {
                 try
@@ -282,7 +279,13 @@ namespace web1c_backend.Controllers
                     sessionId = long.Parse(HttpContext.Request.Cookies[cookieKey]);
                 }
                 catch (FormatException)
-                { }
+                {
+                    sessionId = null;
+                }
+            }
+            else
+            {
+                sessionId = null;
             }
 
             return sessionId;
