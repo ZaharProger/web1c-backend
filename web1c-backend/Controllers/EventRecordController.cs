@@ -31,7 +31,7 @@ namespace web1c_backend.Controllers
         public async Task<JsonResult> GetEventRecords([FromQuery] GetParams getEventParams)
         {
             En_event_record[]? foundData = Array.Empty<En_event_record>();
-            if (getEventParams.Type == -1)
+            if (getEventParams.Key.Equals(""))
             {
                 foundData = await _context.Events
                     .Select(eventRecord => new En_event_record()

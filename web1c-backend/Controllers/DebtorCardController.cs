@@ -31,7 +31,7 @@ namespace web1c_backend.Controllers
         public async Task<JsonResult> GetDebtorCards([FromQuery] GetParams getDebtorCardParams)
         {
             En_debtor_card[]? foundData = Array.Empty<En_debtor_card>();
-            if (getDebtorCardParams.Type == -1)
+            if (getDebtorCardParams.Key.Equals(""))
             {
                 foundData = await _context.Debtor_Cards
                     .Select(debtorCard=> new En_debtor_card()

@@ -31,7 +31,7 @@ namespace web1c_backend.Controllers
         public async Task<JsonResult> GetDebtorAgreements([FromQuery] GetParams getDebtorAgreementParams)
         {
             En_debtor_agreement[]? foundData = Array.Empty<En_debtor_agreement>();
-            if (getDebtorAgreementParams.Type == -1)
+            if (getDebtorAgreementParams.Key.Equals(""))
             {
                 foundData = await _context.Debtor_Agreement
                     .Select(debtorAgreement => new En_debtor_agreement()
