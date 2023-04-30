@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace web1c_backend.Models.Entities
 {
     [Table("Event_records")]
-    public class En_event_record
+    public class En_event_record : EntityWithRoute
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity), Key, Column("event_record_id")]
         public long event_record_id { get; set; }

@@ -50,6 +50,11 @@ namespace web1c_backend.Controllers
                     .ToArrayAsync();
             }
 
+            foreach (var item in foundData)
+            {
+                item.Route = $"{ConstValues.ROUTES[Routes.CLASSES]}{ConstValues.ROUTES[Routes.DEBTORS]}?Key={item.debtor_card_id}";
+            }
+
             var response = new DataResponse<En_debtor_card>()
             {
                 Result = foundData.Length != 0,

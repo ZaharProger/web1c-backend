@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace web1c_backend.Models.Entities
 {
     [Table("Debtor_cards")]
-    public class En_debtor_card
+    public class En_debtor_card : EntityWithRoute
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity), Key, Column("debtor_card_id")]
         public long debtor_card_id { get; set; }

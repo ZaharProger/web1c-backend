@@ -50,6 +50,11 @@ namespace web1c_backend.Controllers
                     .ToArrayAsync();
             }
 
+            foreach (var item in foundData)
+            {
+                item.Route = $"{ConstValues.ROUTES[Routes.DOCUMENTS]}{ConstValues.ROUTES[Routes.EVENTS]}?Key={item.event_record_id}";
+            }
+
             var response = new DataResponse<En_event_record>()
             {
                 Result = foundData.Length != 0,

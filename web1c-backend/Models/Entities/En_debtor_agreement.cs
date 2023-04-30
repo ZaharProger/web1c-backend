@@ -5,7 +5,7 @@ using System.Numerics;
 namespace web1c_backend.Models.Entities
 {
     [Table("Debtor_Agreement")]
-    public class En_debtor_agreement
+    public class En_debtor_agreement : EntityWithRoute
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity), Key, Column("debtor_id")]
         public long debtor_id { get; set; }
@@ -65,6 +65,5 @@ namespace web1c_backend.Models.Entities
 
         [Column("responsible", TypeName = "varchar(100)")]
         public string responsible { get; set; }
-
     }
 }

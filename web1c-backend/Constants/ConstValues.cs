@@ -1,4 +1,5 @@
 ﻿
+using Microsoft.Extensions.Logging;
 using web1c_backend.Models.Http;
 
 
@@ -28,5 +29,31 @@ namespace web1c_backend.Constants
         public static readonly string TYPE_FAILURE = "Некорректный тип запроса";
 
         public static readonly DateTime UNIX_START_DATE = new DateTime(1970, 1, 1);
+
+        public static readonly Dictionary<Routes, string> ROUTES = new Dictionary<Routes, string>()
+        {
+            { Routes.MAIN, "/" },
+            { Routes.AUTH, "/auth" },
+            { Routes.NOT_FOUND, "/*" },
+            { Routes.CLASSES, "/classes" },
+            { Routes.DOCUMENTS, "/docs" },
+            { Routes.SETTINGS, "/settings" },
+            { Routes.SOCIETIES, "/societies" },
+            { Routes.WORK_TYPES, "/work-types" },
+            { Routes.DEBTORS, "/debtors" },
+            { Routes.EVENTS, "/events" },
+            { Routes.DEBTOR_CONTRACTS, "/debtor-contracts" },
+            { Routes.SIDES, "/sides" },
+            { Routes.SANCTIONS, "/sanctions" },
+            { Routes.CURRENCIES, "/currencies" },
+            { Routes.BDDS_NOTES, "/bdds-notes" },
+            { Routes.BUDGET_NOTES, "/budget-notes" },
+            { Routes.SETTLEMENTS, "/settlements" },
+            { Routes.EXTERNAL_IS, "/external-is" },
+            { Routes.MARKETS, "/markets" },
+            { Routes.COUNTERAGENTS_CATEGORIES, "/counteragents-categories" },
+            { Routes.USERS, "/users" },
+            { Routes.EVENT_STATES, "/event-states" }
+        };
     }
 }
