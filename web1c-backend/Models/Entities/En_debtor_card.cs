@@ -16,13 +16,13 @@ namespace web1c_backend.Models.Entities
         [Column("debtor_id", TypeName = "BIGINT")]
         public long debtor_id { get; set; }
         [Column("inn", TypeName = "VARCHAR(10)")]
-        public string inn { get; set; }
+        public string? inn { get; set; }
         [Column("kpp", TypeName = "VARCHAR(9)")]
-        public string kpp { get; set; }
+        public string? kpp { get; set; }
         [Column("is_smp", TypeName = "BIT")]
         public bool is_smp { get; set; }
         [Column("sanctions", TypeName = "VARCHAR(1000)")]
-        public string sanctions { get; set; }
+        public string? sanctions { get; set; }
         [Column("is_bankrupt", TypeName = "BIT")]
         public bool is_bankrupt { get; set; }
         [Column("is_in_creditors_list", TypeName = "BIT")]

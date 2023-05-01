@@ -39,8 +39,7 @@ namespace web1c_backend.Controllers
                         date_agreement = debtorAgreement.date_agreement,
                         debtor_id = debtorAgreement.debtor_id,                     
                         debtor_name = debtorAgreement.debtor_name,
-                        base_id = debtorAgreement.base_id,
-                        responsible = debtorAgreement.responsible
+                        base_id = debtorAgreement.base_id
                     })
                     .ToArrayAsync();
             }

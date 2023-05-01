@@ -12,28 +12,30 @@ namespace web1c_backend.Models.Entities
         [Column("creation_date", TypeName = "BIGINT")]
         public long creation_date { get; set; }
         [Column("send_date", TypeName = "BIGINT")]
-        public long send_date { get; set; }
+        public long? send_date { get; set; }
         [Column("exp_execution_date", TypeName = "BIGINT")]
-        public long exp_execution_date { get; set; }
+        public long? exp_execution_date { get; set; }
         [Column("execution_date", TypeName = "BIGINT")]
-        public long executon_date { get; set; }
+        public long? executon_date { get; set; }
 
-        [Column("base_document_id", TypeName = "BIGINT")]
-        public long base_document_id { get; set; }
+        [Column("base_id", TypeName = "BIGINT")]
+        public long? base_id { get; set; }
         [Column("work_type_id", TypeName = "BIGINT")]
         public long work_type_id { get; set; }
         [Column("debtor_card_id", TypeName = "BIGINT")]
         public long debtor_card_id { get; set; }
-        [Column("company_id", TypeName = "BIGINT")]
-        public long company_id { get; set; }
+        [Column("society_id", TypeName = "BIGINT")]
+        public long? society_id { get; set; }
         [Column("business_id", TypeName = "BIGINT")]
-        public long business_id { get; set; }
+        public long? business_id { get; set; }
         [Column("event_description", TypeName = "VARCHAR(1000)")]
         public string event_description { get; set; }
         [Column("event_comment", TypeName = "VARCHAR(1000)")]
         public string event_comment { get; set; }
         [Column("responsible_user", TypeName = "VARCHAR(50)")]
-        public string responsible_user { get; set; }
+        public string? responsible_user { get; set; }
+        [Column("event_state_id", TypeName = "BIGINT")]
+        public long? event_state_id { get; set; }
     }
 }
 

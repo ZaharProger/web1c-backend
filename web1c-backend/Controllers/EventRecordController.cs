@@ -38,8 +38,8 @@ namespace web1c_backend.Controllers
                     {                        
                         creation_date = eventRecord.creation_date,                     
                         event_record_id = eventRecord.event_record_id,
-                        base_document_id = eventRecord.base_document_id,
-                        responsible_user = eventRecord.responsible_user
+                        debtor_card_id = eventRecord.debtor_card_id,
+                        work_type_id = eventRecord.work_type_id
                     })
                     .ToArrayAsync();
             }
