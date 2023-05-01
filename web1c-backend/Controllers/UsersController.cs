@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography;
 using web1c_backend.Models;
@@ -11,21 +6,16 @@ using web1c_backend.Constants;
 using web1c_backend.Models.Entities;
 using web1c_backend.Models.Http.Responses;
 using web1c_backend.Models.Http.Params;
-using static System.Collections.Specialized.BitVector32;
 using System.Text;
 
 namespace web1c_backend.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UsersController : ControllerBase
+    public class UsersController : Web1cController
     {
-        private readonly Web1cDBContext _context;
-
-        public UsersController(Web1cDBContext context)
-        {
-            this._context = context;
-        }
+        public UsersController(Web1cDBContext context) : base(context)
+        { }
 
         //0 - by login
         //1- by id
@@ -62,7 +52,7 @@ namespace web1c_backend.Controllers
         {
             En_user[]? foundData = Array.Empty<En_user>();
 
-            foundData = await _context.Users
+            foundData = await context.Users
                 .Where(user => user.En_user_login.Equals(userLogin))
                 .Select(foundUser => new En_user()
                 {
@@ -83,7 +73,7 @@ namespace web1c_backend.Controllers
         {
             En_user[]? foundData = Array.Empty<En_user>();
 
-            foundData = await _context.Users
+            foundData = await context.Users
                 .Where(user => user.En_user_id.Equals(id))
                 .Select(foundUser => new En_user()
                 {
@@ -106,9 +96,9 @@ namespace web1c_backend.Controllers
 
             if(sessionId != null)
             {
-                foundData = await _context.Sessions
+                foundData = await context.Sessions
                 .Where(session => session.En_session_id == sessionId)
-                .Join(_context.Users, session => session.En_user_id, user => user.En_user_id, (session, user) => new
+                .Join(context.Users, session => session.En_user_id, user => user.En_user_id, (session, user) => new
                 {
                     sessionId = session.En_session_id,
                     userData = new En_user()
@@ -157,7 +147,7 @@ namespace web1c_backend.Controllers
 
         private async Task<PostResponse> RegisterUser(AuthParams authParams, SHA256? passwordEncryptor)
         {
-            var isUserExist = await _context.Users
+            var isUserExist = await context.Users
                 .AnyAsync(user => user.En_user_login.Equals(authParams.Login));
             var incorrectFieldType = ConstValues.L_FIELD_TYPE;
 
@@ -167,12 +157,12 @@ namespace web1c_backend.Controllers
                 var passwordByteArray = Encoding.UTF8.GetBytes(authParams.Password);
                 var hashedPassword = passwordEncryptor.ComputeHash(passwordByteArray);
 
-                await _context.Users.AddAsync(new En_user()
+                await context.Users.AddAsync(new En_user()
                 {
                     En_user_login = authParams.Login,
                     En_user_password = hashedPassword
                 });
-                await _context.SaveChangesAsync();
+                await context.SaveChangesAsync();
             }
 
             return new PostResponse()
@@ -185,7 +175,7 @@ namespace web1c_backend.Controllers
 
         private async Task<PostResponse> AuthorizeUser(AuthParams authParams, SHA256? passwordEncryptor)
         {
-            var foundUser = await _context.Users
+            var foundUser = await context.Users
                 .Where(user => user.En_user_login.Equals(authParams.Login))
                 .ToArrayAsync();
 
@@ -204,12 +194,12 @@ namespace web1c_backend.Controllers
                     messageForClient = ConstValues.AUTH_SUCCESS;
                     sessionId = (long)DateTime.Now.Subtract(new DateTime(1970, 1, 1)).TotalSeconds;
 
-                    await _context.Sessions.AddAsync(new En_session()
+                    await context.Sessions.AddAsync(new En_session()
                     {
                         En_session_id = sessionId,
                         En_user_id = foundUser[0].En_user_id
                     });
-                    await _context.SaveChangesAsync();
+                    await context.SaveChangesAsync();
 
                     HttpContext.Response.Cookies.Append(ConstValues.SESSION_ID, sessionId.ToString(), new CookieOptions()
                     {
@@ -246,7 +236,7 @@ namespace web1c_backend.Controllers
             var sessionId = CheckSession(ConstValues.SESSION_ID);
             try
             {
-                sessionToRemove = await _context.Sessions
+                sessionToRemove = await context.Sessions
                     .FirstAsync(session => session.En_session_id == sessionId);
             }
             catch (Exception)
@@ -258,8 +248,8 @@ namespace web1c_backend.Controllers
             {
                 HttpContext.Response.Cookies.Delete(ConstValues.SESSION_ID);
 
-                _context.Sessions.Remove(sessionToRemove);
-                await _context.SaveChangesAsync();
+                context.Sessions.Remove(sessionToRemove);
+                await context.SaveChangesAsync();
             }
 
             return new JsonResult(new BaseResponse()
@@ -267,28 +257,6 @@ namespace web1c_backend.Controllers
                 Result = sessionToRemove != null,
                 Message = sessionToRemove != null ? ConstValues.SESSION_REMOVED : ConstValues.SESSION_NOT_FOUND
             });
-        }
-
-        private long? CheckSession(string cookieKey)
-        {
-            long? sessionId;
-            if (HttpContext.Request.Cookies[cookieKey] != null)
-            {
-                try
-                {
-                    sessionId = long.Parse(HttpContext.Request.Cookies[cookieKey]);
-                }
-                catch (FormatException)
-                {
-                    sessionId = null;
-                }
-            }
-            else
-            {
-                sessionId = null;
-            }
-
-            return sessionId;
         }
     }
 }
