@@ -14,11 +14,16 @@ namespace web1c_backend.Services
             this.context = context;
         }
 
-        public async Task<EntityWithRoute[]> BuildCollection (IDataBuilderStrategy strategy, GetParams queryParams)
+        public async Task<EntityWithRoute[]> Build(IDataBuilderStrategy strategy, GetParams queryParams)
         {
-            return await strategy
-                .BuildCollection(context, queryParams)
-                .ToArrayAsync();
+            IQueryable<EntityWithRoute> collection = queryParams.Type switch
+            {
+                1 => strategy.BuildCollection(context),
+                2 => strategy.BuildFullEntity(context, queryParams.Key),
+                _ => strategy.BuildEntityFromHistory(context, long.Parse(queryParams.Key)),
+            };
+
+            return await collection.ToArrayAsync();
         }
     }
 }

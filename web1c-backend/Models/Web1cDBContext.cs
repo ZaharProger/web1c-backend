@@ -22,7 +22,7 @@ namespace web1c_backend.Models
         public DbSet<En_turnover> Turnovers { get; set; }
         public DbSet<En_work_type> WorkTypes { get; set; }
         public DbSet<En_market> Markets { get; set; }
-
+        public DbSet<En_history> History { get; set; }
         public Web1cDBContext(DbContextOptions<Web1cDBContext> options) : base(options)
         { }
     }

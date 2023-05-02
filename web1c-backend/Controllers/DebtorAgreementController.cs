@@ -20,10 +20,16 @@ namespace web1c_backend.Controllers
         {
             var sessionId = CheckSession(ConstValues.SESSION_ID);
 
-            var foundData = sessionId == null ? 
-                null
-                :
-                await new DataBuilder(context).BuildCollection(new DebtorAgreementBuilderStrategy(), getDebtorAgreementParams);
+            EntityWithRoute[]? foundData = null;
+            if (sessionId != null)
+            {
+                foundData = await new DataBuilder(context).Build(new DebtorAgreementBuilderStrategy(), getDebtorAgreementParams);
+
+                if (getDebtorAgreementParams.Type == 2 && foundData.Length != 0)
+                {
+                    await UpdateHistory(foundData.First(), (long) sessionId);
+                }
+            }
 
             var response = new DataResponse<EntityWithRoute>()
             {

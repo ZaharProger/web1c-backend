@@ -5,8 +5,6 @@ using web1c_backend.Models.Entities;
 using web1c_backend.Models.Http.Responses;
 using web1c_backend.Models.Http.Params;
 using web1c_backend.Services;
-using System.Text.Json;
-using System.Runtime.Serialization.Json;
 
 namespace web1c_backend.Controllers
 {
@@ -22,10 +20,16 @@ namespace web1c_backend.Controllers
         {
             var sessionId = CheckSession(ConstValues.SESSION_ID);
 
-            var foundData = sessionId == null ?
-                null
-                :
-                await new DataBuilder(context).BuildCollection(new EventRecordBuilderStrategy(), getEventParams);
+            EntityWithRoute[]? foundData = null;
+            if (sessionId != null)
+            {              
+                foundData = await new DataBuilder(context).Build(new EventRecordBuilderStrategy(), getEventParams);
+
+                if (getEventParams.Type == 2 && foundData.Length != 0)
+                {
+                    await UpdateHistory(foundData.First(), (long) sessionId);
+                }
+            }
 
             var response = new DataResponse<EntityWithRoute>()
             {
