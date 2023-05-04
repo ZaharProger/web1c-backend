@@ -16,10 +16,11 @@ namespace web1c_backend.Services
 
         public async Task<EntityWithRoute[]> Build(IDataBuilderStrategy strategy, GetParams queryParams)
         {
+            // В зависимости от значения Type используется тот или иной метод стратегии
             IQueryable<EntityWithRoute> collection = queryParams.Type switch
             {
                 1 => strategy.BuildCollection(context),
-                2 => strategy.BuildFullEntity(context, queryParams.Key),
+                2 => strategy.BuildFullEntity(context, long.TryParse(queryParams.Key, out long res)? res : 0L),
                 _ => strategy.BuildEntityFromHistory(context, long.Parse(queryParams.Key)),
             };
 

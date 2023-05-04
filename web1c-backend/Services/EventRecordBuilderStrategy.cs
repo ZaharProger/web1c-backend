@@ -29,11 +29,11 @@ namespace web1c_backend.Services
                    };
         }
 
-        public IQueryable<EntityWithRoute> BuildFullEntity(Web1cDBContext context, string entityKey)
+        public IQueryable<EntityWithRoute> BuildFullEntity(Web1cDBContext context, long entityKey)
         {
             return from eventRecord in context.Events
 
-                   where eventRecord.event_record_id.ToString().Equals(entityKey)
+                   where eventRecord.event_record_id == entityKey
 
                    join anotherEventRecord in context.Events
                    on eventRecord.base_id equals anotherEventRecord.event_record_id into joinEvents

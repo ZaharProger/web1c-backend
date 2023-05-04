@@ -26,11 +26,11 @@ namespace web1c_backend.Services
                    };
         }
 
-        public IQueryable<EntityWithRoute> BuildFullEntity(Web1cDBContext context, string entityKey)
+        public IQueryable<EntityWithRoute> BuildFullEntity(Web1cDBContext context, long entityKey)
         {
             return from debtorCard in context.DebtorCards
 
-                   where debtorCard.debtor_card_id.ToString().Equals(entityKey)
+                   where debtorCard.debtor_card_id == entityKey
 
                    join counterparty in context.Counterparties
                    on debtorCard.debtor_id equals counterparty.counterparty_id into joinCounterparties
