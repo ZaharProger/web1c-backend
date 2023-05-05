@@ -105,5 +105,23 @@ namespace web1c_backend.Services
                           $"?Key={debtorAgreement.debtor_id}"
                    };
         }
+
+        public IQueryable<EntityWithRoute> BuildCollectionByKey(Web1cDBContext context, string searchKey)
+        {
+            return from debtorAgreement in context.DebtorAgreements
+
+                   join counterpartyAgreement in context.CounterpartyAgreements
+                   on debtorAgreement.base_id equals counterpartyAgreement.agreement_id
+
+                   select new En_debtor_agreement()
+                   {
+                       date_agreement = debtorAgreement.date_agreement,
+                       debtor_id = debtorAgreement.debtor_id,
+                       debtor_name = debtorAgreement.debtor_name,
+                       BaseName = counterpartyAgreement.agreement_name,
+                       Route = $"{ConstValues.ROUTES[Routes.DOCUMENTS]}{ConstValues.ROUTES[Routes.DEBTOR_CONTRACTS]}" +
+                          $"?Key={debtorAgreement.debtor_id}"
+                   };
+        }
     }
 }

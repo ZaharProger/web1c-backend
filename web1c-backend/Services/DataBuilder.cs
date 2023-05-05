@@ -21,7 +21,8 @@ namespace web1c_backend.Services
             {
                 1 => strategy.BuildCollection(context),
                 2 => strategy.BuildFullEntity(context, long.TryParse(queryParams.Key, out long res)? res : 0L),
-                _ => strategy.BuildEntityFromHistory(context, long.Parse(queryParams.Key)),
+                3 => strategy.BuildEntityFromHistory(context, long.Parse(queryParams.Key)),
+                _ => strategy.BuildCollectionByKey(context, queryParams.Key),
             };
 
             return await collection.ToArrayAsync();

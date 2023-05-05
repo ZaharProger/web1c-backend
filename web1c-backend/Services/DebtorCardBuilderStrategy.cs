@@ -65,5 +65,34 @@ namespace web1c_backend.Services
                            $"?Key={debtorCard.debtor_card_id}"
                    };
         }
+
+        public IQueryable<EntityWithRoute> BuildCollectionByKey(Web1cDBContext context, string searchKey)
+        {
+
+            return from debtorCard in context.DebtorCards
+
+                   join counterparty in context.Counterparties
+                   on debtorCard.debtor_id equals counterparty.counterparty_id into joinCounterparties
+                   from joinCounterparty in joinCounterparties.DefaultIfEmpty()
+
+                   where (
+                       debtorCard.debtor_card_name.Contains(searchKey) ||
+                       debtorCard.inn.Contains(searchKey) ||
+                       debtorCard.kpp.Contains(searchKey) ||
+                       debtorCard.sanctions.Contains(searchKey) ||
+                       joinCounterparty.counterparty_name.Contains(searchKey)
+                   )
+
+                   select new En_debtor_card(debtorCard)
+                   {
+                       creation_date = debtorCard.creation_date,
+                       debtor_card_id = debtorCard.debtor_card_id,
+                       debtor_card_name = debtorCard.debtor_card_name,
+                       debtor_id = debtorCard.debtor_id,
+                       DebtorName = joinCounterparty != null ? joinCounterparty.counterparty_name : "",
+                       Route = $"{ConstValues.ROUTES[Routes.CLASSES]}{ConstValues.ROUTES[Routes.DEBTORS]}" +
+                           $"?Key={debtorCard.debtor_card_id}"
+                   };
+        }
     }
 }
