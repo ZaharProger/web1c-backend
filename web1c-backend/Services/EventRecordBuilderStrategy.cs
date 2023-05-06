@@ -134,6 +134,7 @@ namespace web1c_backend.Services
                    from joinEventState in joinEventStates.DefaultIfEmpty()
 
                    where(
+                       eventRecord.event_record_id.ToString().Contains(searchKey) ||
                        eventRecord.event_description.Contains(searchKey) ||
                        eventRecord.event_comment.Contains(searchKey) ||
                        joinWorkType.work_type_name.Contains(searchKey) ||

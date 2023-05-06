@@ -113,6 +113,58 @@ namespace web1c_backend.Services
                    join counterpartyAgreement in context.CounterpartyAgreements
                    on debtorAgreement.base_id equals counterpartyAgreement.agreement_id
 
+                   join budget in context.Budgets
+                   on debtorAgreement.budget_id equals budget.budget_id into joinBudgets
+                   from joinBudget in joinBudgets.DefaultIfEmpty()
+
+                   join business in context.Businesses
+                   on debtorAgreement.business_id equals business.business_id into joinBusinesses
+                   from joinBusiness in joinBusinesses.DefaultIfEmpty()
+
+                   join turnover in context.Turnovers
+                   on debtorAgreement.turnover_id equals turnover.turnover_id into joinTurnovers
+                   from joinTurnover in joinTurnovers.DefaultIfEmpty()
+
+                   join currency in context.Currencies
+                   on debtorAgreement.currency_id equals currency.currency_id into joinCurrencies
+                   from joinCurrency in joinCurrencies.DefaultIfEmpty()
+
+                   join counterType in context.CounterTypes
+                   on debtorAgreement.counter_id equals counterType.counter_id into joinCounterTypes
+                   from joinCounterType in joinCounterTypes.DefaultIfEmpty()
+
+                   join payment in context.PaymentProcesses
+                   on debtorAgreement.payment_id equals payment.payment_id into joinPayments
+                   from joinPayment in joinPayments.DefaultIfEmpty()
+
+                   join society in context.Societies
+                   on debtorAgreement.society_id equals society.society_id into joinSocieties
+                   from joinSociety in joinSocieties.DefaultIfEmpty()
+
+                   join market in context.Markets
+                   on debtorAgreement.Market_view_id equals market.market_id into joinMarkets
+                   from joinMarket in joinMarkets.DefaultIfEmpty()
+
+                   join user in context.Users
+                   on debtorAgreement.responsible_id equals user.En_user_id into joinUsers
+                   from joinUser in joinUsers.DefaultIfEmpty()
+                   where (
+                        debtorAgreement.debtor_id.ToString().Contains(searchKey) ||
+                        debtorAgreement.debtor_name.Contains(searchKey) ||
+                        counterpartyAgreement.agreement_name.Contains(searchKey) ||
+                        debtorAgreement.status_agreement.Contains(searchKey) ||
+                        debtorAgreement.number_agreement.Contains(searchKey) ||
+                        joinCurrency.currency_name.Contains(searchKey) ||
+                        joinBudget.budget_name.Contains(searchKey) ||
+                        joinTurnover.turnover_name.Contains(searchKey) ||
+                        joinPayment.payment_name.Contains(searchKey) ||
+                        debtorAgreement.comment.Contains(searchKey) ||
+                        joinSociety.society_name.Contains(searchKey) ||
+                        joinBusiness.business_name.Contains(searchKey) ||
+                        debtorAgreement.MarketViewName.Contains(searchKey) ||
+                        joinUser.En_user_login.Contains(searchKey)
+                   )
+
                    select new En_debtor_agreement()
                    {
                        date_agreement = debtorAgreement.date_agreement,

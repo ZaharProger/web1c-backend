@@ -76,6 +76,7 @@ namespace web1c_backend.Services
                    from joinCounterparty in joinCounterparties.DefaultIfEmpty()
 
                    where (
+                       debtorCard.debtor_card_id.ToString().Contains(searchKey) ||
                        debtorCard.debtor_card_name.Contains(searchKey) ||
                        debtorCard.inn.Contains(searchKey) ||
                        debtorCard.kpp.Contains(searchKey) ||
