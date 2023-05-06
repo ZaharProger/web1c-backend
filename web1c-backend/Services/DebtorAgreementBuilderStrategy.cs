@@ -148,6 +148,7 @@ namespace web1c_backend.Services
                    join user in context.Users
                    on debtorAgreement.responsible_id equals user.En_user_id into joinUsers
                    from joinUser in joinUsers.DefaultIfEmpty()
+
                    where (
                         debtorAgreement.debtor_id.ToString().Contains(searchKey) ||
                         debtorAgreement.debtor_name.Contains(searchKey) ||
@@ -161,7 +162,7 @@ namespace web1c_backend.Services
                         debtorAgreement.comment.Contains(searchKey) ||
                         joinSociety.society_name.Contains(searchKey) ||
                         joinBusiness.business_name.Contains(searchKey) ||
-                        debtorAgreement.MarketViewName.Contains(searchKey) ||
+                        joinMarket.market_name.Contains(searchKey) ||
                         joinUser.En_user_login.Contains(searchKey)
                    )
 
