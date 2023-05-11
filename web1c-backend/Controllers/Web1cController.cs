@@ -47,26 +47,16 @@ namespace web1c_backend.Controllers
                 entityType = EntityTypes.DEBTOR_CARD;
                 entityKey = debtorCard.debtor_card_id;
             }
-            else if (entity is En_debtor_agreement debtorAgreement)
-            {
-                entityType = EntityTypes.DEBTOR_AGREEMENT;
-                entityKey = debtorAgreement.debtor_id;
-            }
-            else if (entity is En_event_record eventRecord)
-            {
-                entityType = EntityTypes.EVENT_RECORD;
-                entityKey = eventRecord.event_record_id;
-            }
 
             var entityTypeNum = (byte)entityType;
-            var foundSession = await context.Sessions.FindAsync(sessionId);          
+            var foundSession = await context.Sessions.FindAsync(sessionId);
             var isFound = await context.History
-                .Where(history => history.entity_id == entityKey && 
+                .Where(history => history.entity_id == entityKey &&
                     history.entity_type_id == entityTypeNum && history.user_id == foundSession.En_user_id)
                 .AnyAsync();
 
             if (!isFound)
-            {              
+            {
                 await context.History
                     .AddAsync(new En_history()
                     {

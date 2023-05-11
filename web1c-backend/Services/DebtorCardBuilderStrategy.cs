@@ -10,57 +10,29 @@ namespace web1c_backend.Services
         {
             return from debtorCard in context.DebtorCards
 
-                   join counterparty in context.Counterparties
-                   on debtorCard.debtor_id equals counterparty.counterparty_id into joinCounterparties
-                   from joinCounterparty in joinCounterparties.DefaultIfEmpty()
+                   select new En_debtor_card(debtorCard)
+                   {
+                       creation_date = debtorCard.creation_date,
+                       debtor_card_id = debtorCard.debtor_card_id,
+                       debtor_card_name = debtorCard.debtor_card_name,
+                       debtor = debtorCard.debtor,
+                       Route = $"{ConstValues.ROUTES[Routes.CLASSES]}{ConstValues.ROUTES[Routes.DEBTORS]}" +
+                           $"?Key={debtorCard.debtor_card_id}"
+                   };
+        }
+
+        IQueryable<EntityWithRoute> IDataBuilderStrategy.BuildEntity(Web1cDBContext context, long entityKey)
+        {
+            return from debtorCard in context.DebtorCards
+
+                   where debtorCard.debtor_card_id == entityKey
 
                    select new En_debtor_card(debtorCard)
                    {
                        creation_date = debtorCard.creation_date,
                        debtor_card_id = debtorCard.debtor_card_id,
                        debtor_card_name = debtorCard.debtor_card_name,
-                       debtor_id = debtorCard.debtor_id,
-                       DebtorName = joinCounterparty != null ? joinCounterparty.counterparty_name : "",
-                       Route = $"{ConstValues.ROUTES[Routes.CLASSES]}{ConstValues.ROUTES[Routes.DEBTORS]}" +
-                           $"?Key={debtorCard.debtor_card_id}"
-                   };
-        }
-
-        public IQueryable<EntityWithRoute> BuildFullEntity(Web1cDBContext context, long entityKey)
-        {
-            return from debtorCard in context.DebtorCards
-
-                   where debtorCard.debtor_card_id == entityKey
-
-                   join counterparty in context.Counterparties
-                   on debtorCard.debtor_id equals counterparty.counterparty_id into joinCounterparties
-                   from joinCounterparty in joinCounterparties.DefaultIfEmpty()
-
-                   select new En_debtor_card(debtorCard)
-                   {
-                       DebtorName = joinCounterparty != null ? joinCounterparty.counterparty_name : "",
-                       Route = $"{ConstValues.ROUTES[Routes.CLASSES]}{ConstValues.ROUTES[Routes.DEBTORS]}" +
-                           $"?Key={debtorCard.debtor_card_id}"
-                   };
-        }
-
-        IQueryable<EntityWithRoute> IDataBuilderStrategy.BuildEntityFromHistory(Web1cDBContext context, long entityKey)
-        {
-            return from debtorCard in context.DebtorCards
-
-                   where debtorCard.debtor_card_id == entityKey
-
-                   join counterparty in context.Counterparties
-                   on debtorCard.debtor_id equals counterparty.counterparty_id into joinCounterparties
-                   from joinCounterparty in joinCounterparties.DefaultIfEmpty()
-
-                   select new En_debtor_card(debtorCard)
-                   {
-                       creation_date = debtorCard.creation_date,
-                       debtor_card_id = debtorCard.debtor_card_id,
-                       debtor_card_name = debtorCard.debtor_card_name,
-                       debtor_id = debtorCard.debtor_id,
-                       DebtorName = joinCounterparty != null ? joinCounterparty.counterparty_name : "",
+                       debtor = debtorCard.debtor,
                        Route = $"{ConstValues.ROUTES[Routes.CLASSES]}{ConstValues.ROUTES[Routes.DEBTORS]}" +
                            $"?Key={debtorCard.debtor_card_id}"
                    };
@@ -71,17 +43,10 @@ namespace web1c_backend.Services
 
             return from debtorCard in context.DebtorCards
 
-                   join counterparty in context.Counterparties
-                   on debtorCard.debtor_id equals counterparty.counterparty_id into joinCounterparties
-                   from joinCounterparty in joinCounterparties.DefaultIfEmpty()
-
                    where (
-                       debtorCard.debtor_card_id.ToString().Contains(searchKey) ||
+                       debtorCard.debtor_card_id.ToString().Equals(searchKey) ||
                        debtorCard.debtor_card_name.Contains(searchKey) ||
-                       debtorCard.inn.Contains(searchKey) ||
-                       debtorCard.kpp.Contains(searchKey) ||
-                       debtorCard.sanctions.Contains(searchKey) ||
-                       joinCounterparty.counterparty_name.Contains(searchKey)
+                       debtorCard.debtor.Contains(searchKey)
                    )
 
                    select new En_debtor_card(debtorCard)
@@ -89,8 +54,7 @@ namespace web1c_backend.Services
                        creation_date = debtorCard.creation_date,
                        debtor_card_id = debtorCard.debtor_card_id,
                        debtor_card_name = debtorCard.debtor_card_name,
-                       debtor_id = debtorCard.debtor_id,
-                       DebtorName = joinCounterparty != null ? joinCounterparty.counterparty_name : "",
+                       debtor = debtorCard.debtor,
                        Route = $"{ConstValues.ROUTES[Routes.CLASSES]}{ConstValues.ROUTES[Routes.DEBTORS]}" +
                            $"?Key={debtorCard.debtor_card_id}"
                    };

@@ -24,7 +24,6 @@ namespace web1c_backend.Controllers
             if (sessionId != null)
             {
                 foundData = await new DataBuilder(context).Build(new DebtorCardBuilderStrategy(), getDebtorCardParams);
-
                 if (getDebtorCardParams.Type == 2 && foundData.Length != 0)
                 {
                     await UpdateHistory(foundData.First(), (long) sessionId);

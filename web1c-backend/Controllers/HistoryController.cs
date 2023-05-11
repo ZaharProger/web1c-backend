@@ -37,14 +37,7 @@ namespace web1c_backend.Controllers
                 {
                     historyParams.Key = historyArray[i].entity_id.ToString();
 
-                    IDataBuilderStrategy strategy = historyArray[i].entity_type_id switch
-                    {
-                        (byte) EntityTypes.DEBTOR_CARD => strategy = new DebtorCardBuilderStrategy(),
-                        (byte) EntityTypes.DEBTOR_AGREEMENT => strategy = new DebtorAgreementBuilderStrategy(),
-                        _ => strategy = new EventRecordBuilderStrategy()
-                    };
-
-                    var foundItem = await dataBuilder.Build(strategy, historyParams);
+                    var foundItem = await dataBuilder.Build(new DebtorCardBuilderStrategy(), historyParams);
                     foundData[i] = foundItem.First();
                 }
             }

@@ -2,8 +2,6 @@
 {
     public enum EntityTypes
     {
-        DEBTOR_CARD,
-        DEBTOR_AGREEMENT,
-        EVENT_RECORD
+        DEBTOR_CARD
     }
 }
