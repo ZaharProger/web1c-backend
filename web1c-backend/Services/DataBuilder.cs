@@ -7,20 +7,14 @@ namespace web1c_backend.Services
 {
     public class DataBuilder
     {
-        private readonly Web1cDBContext context;
-
-        public DataBuilder(Web1cDBContext context) 
-        {
-            this.context = context;
-        }
-
-        public async Task<EntityWithRoute[]> Build(IDataBuilderStrategy strategy, GetParams queryParams)
+        public async Task<EntityWithRoute[]> BuildFromCache(Web1cDBContext context, 
+            ICachedDataBuilderStrategy strategy, GetParams queryParams)
         {
             // В зависимости от значения Type используется тот или иной метод стратегии
             IQueryable<EntityWithRoute>? collection = queryParams.Type switch
             {
                 1 => strategy.BuildCollection(context),
-                2 => strategy.BuildEntity(context, long.Parse(queryParams.Key)),
+                2 => strategy.BuildEntityFromHistory(context, long.Parse(queryParams.Key)),
                 3 => strategy.BuildCollectionByKey(context, queryParams.Key),
                 _ => null
             };
@@ -28,6 +22,13 @@ namespace web1c_backend.Services
             return collection != null? 
                 await collection.ToArrayAsync() : 
                 Array.Empty<EntityWithRoute>();
+        }
+
+        public EntityWithRoute[] BuildFromResponse(IDataBuilderStrategy strategy, GetParams queryParams)
+        {
+            return strategy
+                .BuildFromResponse(long.Parse(queryParams.Key))
+                .ToArray();
         }
     }
 }

@@ -31,13 +31,13 @@ namespace web1c_backend.Controllers
                     .ToArrayAsync();
 
                 foundData = new EntityWithRoute[historyArray.Length];
-                var dataBuilder = new DataBuilder(context);
+                var dataBuilder = new DataBuilder();
 
                 for (int i = 0; i < historyArray.Length; ++i)
                 {
                     historyParams.Key = historyArray[i].entity_id.ToString();
 
-                    var foundItem = await dataBuilder.Build(new DebtorCardBuilderStrategy(), historyParams);
+                    var foundItem = await dataBuilder.BuildFromCache(context, new DebtorCardBuilderStrategy(), historyParams);
                     foundData[i] = foundItem.First();
                 }
             }

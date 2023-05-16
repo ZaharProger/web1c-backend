@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Text.Json.Serialization;
 
 namespace web1c_backend.Models.Entities
 {
@@ -18,6 +17,27 @@ namespace web1c_backend.Models.Entities
 
         [Column("debtor", TypeName = "VARCHAR(100)")]
         public string debtor { get; set; }
+
+        [NotMapped]
+        public double? DebtorPaymentArrears { get; set; }
+
+        [NotMapped]
+        public string? Inn { get; set; }
+
+        [NotMapped]
+        public string? Kpp { get; set; }
+
+        [NotMapped]
+        public bool? IsSmp { get; set; }
+
+        [NotMapped]
+        public string? Sanctions { get; set; }
+
+        [NotMapped]
+        public bool? IsBankrupt { get; set; }
+
+        [NotMapped]
+        public bool? IsInCreditorsList { get; set; }
 
         public En_debtor_card() { }
 

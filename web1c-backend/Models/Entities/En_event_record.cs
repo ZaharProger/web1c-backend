@@ -6,6 +6,8 @@
 
         public long CreationDate { get; set; }
 
+        public string EventName { get; set; }
+
         public long? SendDate { get; set; }
 
         public long? ExpExecutionDate { get; set; }

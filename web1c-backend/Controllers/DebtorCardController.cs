@@ -23,18 +23,50 @@ namespace web1c_backend.Controllers
             EntityWithRoute[]? foundData = null;
             if (sessionId != null)
             {
-                foundData = await new DataBuilder(context).Build(new DebtorCardBuilderStrategy(), getDebtorCardParams);
-                if (getDebtorCardParams.Type == 2 && foundData.Length != 0)
+                var builder = new DataBuilder();
+                var strategy = new DebtorCardBuilderStrategy();
+
+                if (getDebtorCardParams.Type == 4)
                 {
-                    await UpdateHistory(foundData.First(), (long) sessionId);
+                    foundData = builder.BuildFromResponse(strategy, getDebtorCardParams);
+
+                    if (foundData.Length != 0)
+                    {
+                        await UpdateHistory(foundData.First(), (long) sessionId);
+                    }                   
+                }
+                else
+                {
+                    foundData = await builder
+                        .BuildFromCache(context, strategy, getDebtorCardParams);
                 }
             }
 
-            var response = new DataResponse<EntityWithRoute>()
+            var response = new NestedDataResponse<EntityWithRoute>()
             {
                 Result = foundData != null && foundData.Length != 0,
                 Message = foundData != null ? "" : ConstValues.SESSION_NOT_FOUND,
-                Data = foundData
+                Data = getDebtorCardParams.Type != 4?                 
+                    foundData
+                    :
+                    foundData != null && foundData.Length != 0 && getDebtorCardParams.Type == 4?
+                    foundData
+                        .Take(1)
+                        .ToArray()
+                    :
+                    foundData,
+                RelatedEvents = foundData != null? 
+                    foundData
+                        .Where(foundItem => foundItem is En_event_record)
+                        .ToArray() 
+                    : 
+                    Array.Empty<En_event_record>(),
+                RelatedAgreements = foundData != null ?
+                    foundData
+                        .Where(foundItem => foundItem is En_debtor_agreement)
+                        .ToArray()
+                    :
+                    Array.Empty<En_debtor_agreement>(),
             };
 
             return new JsonResult(response);

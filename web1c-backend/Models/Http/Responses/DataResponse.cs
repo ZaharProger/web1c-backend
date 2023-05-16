@@ -1,6 +1,4 @@
-﻿using web1c_backend.Models.Entities;
-
-namespace web1c_backend.Models.Http.Responses
+﻿namespace web1c_backend.Models.Http.Responses
 {
     public class DataResponse<T> : BaseResponse
     {
