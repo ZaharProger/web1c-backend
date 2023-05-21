@@ -1,4 +1,4 @@
-﻿using web1c_backend.Models;
+﻿using web1c_backend.Models.Contexts;
 using web1c_backend.Models.Entities;
 
 namespace web1c_backend.Services

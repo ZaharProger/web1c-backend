@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using web1c_backend.Models;
+using web1c_backend.Models.Contexts;
 using web1c_backend.Models.Entities;
 using web1c_backend.Models.Http.Params;
 

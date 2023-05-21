@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using web1c_backend.Constants;
-using web1c_backend.Models;
+using web1c_backend.Models.Contexts;
 using web1c_backend.Models.Entities;
 using web1c_backend.Models.Http.Params;
 using web1c_backend.Models.Http.Responses;
@@ -16,6 +16,20 @@ namespace web1c_backend.Controllers
         public HistoryController(Web1cDBContext context) : base(context)
         { }
 
+        [NonAction]
+        public async Task<List<En_history>> GetHistory()
+        {
+            return await context.History
+                .ToListAsync();
+        }
+
+        [NonAction]
+        public async Task<En_user> GetUser()
+        {
+            return await context.Users
+                .FirstAsync();
+        }
+
         [HttpGet]
         public async Task<JsonResult> GetHistoryHandler([FromQuery] GetParams historyParams)
         {
@@ -25,21 +39,8 @@ namespace web1c_backend.Controllers
             if (sessionId != null)
             {
                 var foundSession = await context.Sessions.FindAsync(sessionId);
-
-                var historyArray = await context.History
-                    .Where(history => history.user_id == foundSession.En_user_id)
-                    .ToArrayAsync();
-
-                foundData = new EntityWithRoute[historyArray.Length];
-                var dataBuilder = new DataBuilder();
-
-                for (int i = 0; i < historyArray.Length; ++i)
-                {
-                    historyParams.Key = historyArray[i].entity_id.ToString();
-
-                    var foundItem = await dataBuilder.BuildFromCache(context, new DebtorCardBuilderStrategy(), historyParams);
-                    foundData[i] = foundItem.First();
-                }
+                var historyArray = await GetUserHistory(foundSession.En_user_id);
+                foundData = await MapHistoryToEntities(historyArray, historyParams);
             }
 
             var response = new DataResponse<EntityWithRoute>()
@@ -50,6 +51,32 @@ namespace web1c_backend.Controllers
             };
 
             return new JsonResult(response);
+        }
+
+        [NonAction]
+        public async Task<En_history[]> GetUserHistory(long? userId)
+        {
+            return await context.History
+                .Where(history => history.user_id == userId)
+                .ToArrayAsync();
+        }
+
+        [NonAction]
+        public async Task<EntityWithRoute[]> MapHistoryToEntities(En_history[] historyArray, GetParams historyParams)
+        {
+            var foundData = new EntityWithRoute[historyArray.Length];
+            var dataBuilder = new DataBuilder();
+
+            for (int i = 0; i < historyArray.Length; ++i)
+            {
+                historyParams.Key = historyArray[i].entity_id.ToString();
+
+                var foundItem = await dataBuilder
+                    .BuildFromCache(context, new DebtorCardBuilderStrategy(), historyParams);
+                foundData[i] = foundItem.First();
+            }
+
+            return foundData;
         }
     }
 }

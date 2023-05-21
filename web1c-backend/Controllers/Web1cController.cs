@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using web1c_backend.Constants;
-using web1c_backend.Models;
+using web1c_backend.Models.Contexts;
 using web1c_backend.Models.Entities;
 
 namespace web1c_backend.Controllers
@@ -37,7 +37,8 @@ namespace web1c_backend.Controllers
             return sessionId;
         }
 
-        protected async Task UpdateHistory(EntityWithRoute entity, long sessionId)
+        [NonAction]
+        public async Task<En_history> UpdateHistory(EntityWithRoute entity, long? userId)
         {
             EntityTypes entityType = EntityTypes.DEBTOR_CARD;
             long entityKey = 0L;
@@ -49,24 +50,25 @@ namespace web1c_backend.Controllers
             }
 
             var entityTypeNum = (byte)entityType;
-            var foundSession = await context.Sessions.FindAsync(sessionId);
             var isFound = await context.History
                 .Where(history => history.entity_id == entityKey &&
-                    history.entity_type_id == entityTypeNum && history.user_id == foundSession.En_user_id)
+                    history.entity_type_id == entityTypeNum && history.user_id == userId)
                 .AnyAsync();
 
+            var newHistory = new En_history();
             if (!isFound)
             {
+                newHistory.entity_type_id = entityTypeNum;
+                newHistory.entity_id = entityKey;
+                newHistory.user_id = userId;
+
                 await context.History
-                    .AddAsync(new En_history()
-                    {
-                        entity_id = entityKey,
-                        entity_type_id = entityTypeNum,
-                        user_id = foundSession?.En_user_id
-                    });
+                    .AddAsync(newHistory);
 
                 await context.SaveChangesAsync();
             }
+
+            return newHistory;
         }
     }
 }
