@@ -4,6 +4,6 @@ namespace web1c_backend.Services
 {
     public interface IDataBuilderStrategy
     {
-        public List<EntityWithRoute> BuildFromResponse(long entityKey);
+        public List<EntityWithRoute> BuildFromResponseAsync(long entityKey);
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace web1c_backend.Models.Entities
+﻿using System.Numerics;
+
+namespace web1c_backend.Models.Entities
 {
     public class En_event_record : EntityWithRoute
     {
@@ -6,7 +8,7 @@
 
         public long CreationDate { get; set; }
 
-        public string EventName { get; set; }
+        public string? EventName { get; set; }
 
         public long? SendDate { get; set; }
 
@@ -14,23 +16,23 @@
 
         public long? ExecutonDate { get; set; }
 
-        public string BaseName { get; set; }
+        public string? BaseName { get; set; }
 
-        public string WorkTypeName { get; set; }
+        public string? WorkTypeName { get; set; }
 
-        public string DebtorCardName { get; set;}
+        public string? DebtorCardName { get; set;}
 
-        public string SocietyName { get; set; }
+        public string? SocietyName { get; set; }
 
-        public string BusinessName { get; set; }
+        public string? BusinessName { get; set; }
 
-        public string EventDescription { get; set; }
+        public string? EventDescription { get; set; }
 
-        public string EventComment { get; set; }
+        public string? EventComment { get; set; }
 
-        public string ResponsibleUserName { get; set; }
+        public string? ResponsibleUserName { get; set; }
 
-        public string EventStateName { get; set; }
+        public string? EventStateName { get; set; }
     }
 }
 

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using web1c_backend.Models.Contexts;
 
@@ -11,9 +12,11 @@ using web1c_backend.Models.Contexts;
 namespace web1cbackend.Migrations
 {
     [DbContext(typeof(Web1cDBContext))]
-    partial class Web1cDBContextModelSnapshot : ModelSnapshot
+    [Migration("20231126145328_EN1")]
+    partial class EN1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

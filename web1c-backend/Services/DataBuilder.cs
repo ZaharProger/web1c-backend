@@ -27,7 +27,7 @@ namespace web1c_backend.Services
         public EntityWithRoute[] BuildFromResponse(IDataBuilderStrategy strategy, GetParams queryParams)
         {
             return strategy
-                .BuildFromResponse(long.Parse(queryParams.Key))
+                .BuildFromResponseAsync(long.Parse(queryParams.Key))
                 .ToArray();
         }
     }

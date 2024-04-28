@@ -11,6 +11,7 @@ namespace web1c_backend.Models.Contexts
         public virtual DbSet<En_history> History { get; set; }
 
         public BaseContext(DbContextOptions<Web1cDBContext> options): base(options) 
-        { }
+        {
+        }
     }
 }

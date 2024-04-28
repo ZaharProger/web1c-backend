@@ -10,35 +10,27 @@ namespace web1c_backend.Models.Entities
         public long debtor_card_id { get; set; }
 
         [Column("debtor_card_name", TypeName = "VARCHAR(100)")]
-        public string debtor_card_name { get; set; }
+        public string? debtor_card_name { get; set; }
 
         [Column("creation_date", TypeName = "BIGINT")]
         public long creation_date { get; set; }
 
         [Column("debtor", TypeName = "VARCHAR(100)")]
-        public string debtor { get; set; }
-
+        public string? debtor { get; set; }
         [NotMapped]
         public double? DebtorPaymentArrears { get; set; }
-
         [NotMapped]
         public string? Inn { get; set; }
-
         [NotMapped]
         public string? Kpp { get; set; }
-
         [NotMapped]
         public bool? IsSmp { get; set; }
-
         [NotMapped]
         public string? Sanctions { get; set; }
-
         [NotMapped]
         public bool? IsBankrupt { get; set; }
-
         [NotMapped]
         public bool? IsInCreditorsList { get; set; }
-
         public En_debtor_card() { }
 
         public En_debtor_card(En_debtor_card debtorCard)

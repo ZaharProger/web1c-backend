@@ -5,7 +5,7 @@ namespace web1c_backend.Services
 {
     public class DebtorAgreementBuilderStrategy : IDataBuilderStrategy
     {
-        public List<EntityWithRoute> BuildFromResponse(long entityKey)
+        public List<EntityWithRoute> BuildFromResponseAsync(long entityKey)
         {
             var data = new List<EntityWithRoute>();
 
@@ -33,7 +33,7 @@ namespace web1c_backend.Services
                         PublicStatus = true,
                         TypicalStatus = false,
                         DisabledStatus = true,
-                        ResponsibleName = "Домолего Захар Андреевич",
+                        ResponsibleName = "Акишин Андрей Николаевич",
                         Route = $"{ConstValues.ROUTES[Routes.CLASSES]}{ConstValues.ROUTES[Routes.DEBTOR_CONTRACTS]}" +
                            $"/{entityKey}"
                     });

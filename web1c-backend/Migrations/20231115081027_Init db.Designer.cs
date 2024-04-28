@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using web1c_backend.Models.Contexts;
 
@@ -11,9 +12,11 @@ using web1c_backend.Models.Contexts;
 namespace web1cbackend.Migrations
 {
     [DbContext(typeof(Web1cDBContext))]
-    partial class Web1cDBContextModelSnapshot : ModelSnapshot
+    [Migration("20231115081027_Init db")]
+    partial class Initdb
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -31,36 +34,17 @@ namespace web1cbackend.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("debtor_card_id"));
 
-                    b.Property<double?>("DebtorPaymentArrears")
-                        .HasColumnType("float");
-
-                    b.Property<string>("Inn")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool?>("IsBankrupt")
-                        .HasColumnType("bit");
-
-                    b.Property<bool?>("IsInCreditorsList")
-                        .HasColumnType("bit");
-
-                    b.Property<bool?>("IsSmp")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Kpp")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Sanctions")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<long>("creation_date")
                         .HasColumnType("BIGINT")
                         .HasColumnName("creation_date");
 
                     b.Property<string>("debtor")
+                        .IsRequired()
                         .HasColumnType("VARCHAR(100)")
                         .HasColumnName("debtor");
 
                     b.Property<string>("debtor_card_name")
+                        .IsRequired()
                         .HasColumnType("VARCHAR(100)")
                         .HasColumnName("debtor_card_name");
 

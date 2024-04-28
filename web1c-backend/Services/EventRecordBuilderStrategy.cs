@@ -5,7 +5,7 @@ namespace web1c_backend.Services
 {
     public class EventRecordBuilderStrategy : IDataBuilderStrategy
     {
-        public List<EntityWithRoute> BuildFromResponse(long entityKey)
+        public List<EntityWithRoute> BuildFromResponseAsync(long entityKey)
         {
             var data = new List<EntityWithRoute>();
 
@@ -26,7 +26,7 @@ namespace web1c_backend.Services
                     BusinessName = "Группа Прочие компании",
                     EventComment = "",
                     EventDescription = "",
-                    ResponsibleUserName = "Домолего Захар Андреевич",
+                    ResponsibleUserName = "Андреев Борис Павлович",
                     EventStateName = "Завершен",
                     Route = $"{ConstValues.ROUTES[Routes.DOCUMENTS]}{ConstValues.ROUTES[Routes.EVENTS]}" +
                            $"/{entityKey}"

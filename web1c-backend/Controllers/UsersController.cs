@@ -192,16 +192,16 @@ namespace web1c_backend.Controllers
                 {
                     incorrectFieldType = ConstValues.EMPTY_STRING;
                     messageForClient = ConstValues.AUTH_SUCCESS;
-                    sessionId = (long)DateTime.Now.Subtract(new DateTime(1970, 1, 1)).TotalSeconds;
 
-                    await context.Sessions.AddAsync(new En_session()
+                    var newSession = new En_session()
                     {
-                        En_session_id = sessionId,
                         En_user_id = foundUser[0].En_user_id
-                    });
+                    };
+                    await context.Sessions.AddAsync(newSession);
                     await context.SaveChangesAsync();
 
-                    HttpContext.Response.Cookies.Append(ConstValues.SESSION_ID, sessionId.ToString(), new CookieOptions()
+                    HttpContext.Response.Cookies.Append(ConstValues.SESSION_ID, 
+                        newSession.En_session_id.ToString(), new CookieOptions()
                     {
                         Path = "/",
                         Secure = true,

@@ -6,7 +6,7 @@ namespace web1c_backend.Models.Entities
     [Table("En_session")]
     public class En_session
     {
-        [Column("En_session_id"), Key]
+        [Column("En_session_id"), Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public long En_session_id { get; set; }
 
         [Column("En_user_id")]
